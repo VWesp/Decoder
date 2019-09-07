@@ -41,6 +41,7 @@ if __name__ == "__main__":
             decode_frame = tk.Frame(code_frame)
             for letter in self.decode:
                 letter_decode = tk.StringVar()
+                letter_decode.trace("w", lambda name, index, mode, letter_decode=letter_decode: self.limitCharacter(letter_decode))
                 self.decode[letter] = letter_decode
                 tk.Entry(decode_frame, textvariable=letter_decode, width=2).pack(side="left")
 
@@ -87,6 +88,10 @@ if __name__ == "__main__":
                 self.decode[letter] = letter_decode
 
             self.text_decode_area.delete(1.0, "end")
+
+        def limitCharacter(self, input):
+            if(len(input.get()) > 0):
+                input.set(input.get()[0])
 
     try:
         root = tk.Tk()
