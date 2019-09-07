@@ -13,11 +13,6 @@ if __name__ == "__main__":
                            "N": "", "O": "", "P": "", "Q": "", "R": "", "S": "",
                            "T": "", "U": "", "V": "", "W": "", "X": "", "Y": "",
                            "Z": ""}
-            self.original_alphabet = {"A": "", "B": "", "C": "", "D": "", "E": "", "F": "", "G": "",
-                                      "H": "", "I": "", "J": "", "K": "", "L": "", "M": "",
-                                      "N": "", "O": "", "P": "", "Q": "", "R": "", "S": "",
-                                      "T": "", "U": "", "V": "", "W": "", "X": "", "Y": "",
-                                      "Z": ""}
             tk.Frame.__init__(self, master)
             self.master = master
             self.initWindow()
@@ -63,7 +58,7 @@ if __name__ == "__main__":
 
         def buildCodeFrame(self):
             self.alphabet_frame = tk.Frame(self.code_frame)
-            for letter in self.original_alphabet:
+            for letter in self.decode:
                 letter_var = tk.StringVar()
                 letter_var.set(letter)
                 letter_entry = tk.Entry(self.alphabet_frame, textvariable=letter_var,
@@ -74,7 +69,7 @@ if __name__ == "__main__":
             self.alphabet_frame.pack(fill="both", expand=0)
 
             self.decode_frame = tk.Frame(self.code_frame)
-            for letter in self.original_alphabet:
+            for letter in self.decode:
                 letter_decode = tk.StringVar()
                 letter_decode.trace("w", lambda name, index, mode, letter_decode=letter_decode: self.limitCharacter(letter_decode))
                 self.decode[letter] = letter_decode
@@ -112,6 +107,11 @@ if __name__ == "__main__":
             self.text_decode_area.insert("1.0", "".join(decoded_text))
 
         def resetDecoding(self):
+            self.decode = {"A": "", "B": "", "C": "", "D": "", "E": "", "F": "", "G": "",
+                           "H": "", "I": "", "J": "", "K": "", "L": "", "M": "",
+                           "N": "", "O": "", "P": "", "Q": "", "R": "", "S": "",
+                           "T": "", "U": "", "V": "", "W": "", "X": "", "Y": "",
+                           "Z": ""}
             self.alphabet_frame.destroy()
             self.decode_frame.destroy()
             self.buildCodeFrame()
