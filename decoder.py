@@ -158,7 +158,7 @@ if __name__ == "__main__":
                 self.closeWindow(window)
             else:
                 messagebox.showwarning("Warning", "The character '" + letter.get().upper() + "' already exists")
-                self.addLetter()
+                #self.addLetter()
 
         def closeWindow(self, window):
             window.destroy()
@@ -173,7 +173,7 @@ if __name__ == "__main__":
 
     try:
         root = tk.Tk()
-        root.geometry("425x400")
+        root.geometry("425x490")
         Application(root)
         root.resizable(False, False)
         root.mainloop()
