@@ -22,10 +22,9 @@ if __name__ == "__main__":
             self.pack(fill="both", expand=1)
 
             button_frame_upper = tk.Frame(self)
-            tk.Button(button_frame_upper, text="Open file", command=self.openFile).pack(side="left", padx=25)
-            tk.Button(button_frame_upper, text="Decode", command=self.translateText).pack(side="left", padx=25)
-            tk.Button(button_frame_upper, text="Add letter", command=self.addLetter).pack(side="left", padx=25)
-            tk.Button(button_frame_upper, text="Reset", command=self.resetDecoding).pack(side="left", padx=25)
+            tk.Button(button_frame_upper, text="Open file", command=self.openFile).pack(side="left", padx=40)
+            tk.Button(button_frame_upper, text="Add letter", command=self.addLetter).pack(side="left", padx=40)
+            tk.Button(button_frame_upper, text="Reset", command=self.resetDecoding).pack(side="left", padx=40)
             button_frame_upper.pack(fill="both", expand=0, pady=5)
 
             button_frame_lower = tk.Frame(self)
@@ -71,7 +70,7 @@ if __name__ == "__main__":
             self.decode_frame = tk.Frame(self.code_frame)
             for letter in self.decode:
                 letter_decode = tk.StringVar()
-                letter_decode.trace("w", lambda name, index, mode, letter_decode=letter_decode: self.limitCharacter(letter_decode))
+                letter_decode.trace("w", lambda name, index, mode, letter_decode=letter_decode: self.translateText(letter_decode))
                 self.decode[letter] = letter_decode
                 tk.Entry(self.decode_frame, textvariable=letter_decode, width=2).pack(side="left")
 
@@ -85,7 +84,41 @@ if __name__ == "__main__":
                     self.text_area.delete(1.0, "end")
                     self.text_area.insert(1.0, textReader.read())
 
-        def translateText(self):
+                self.translateText(tk.StringVar())
+
+        def resetDecoding(self):
+            self.decode = {"A": "", "B": "", "C": "", "D": "", "E": "", "F": "", "G": "",
+                           "H": "", "I": "", "J": "", "K": "", "L": "", "M": "",
+                           "N": "", "O": "", "P": "", "Q": "", "R": "", "S": "",
+                           "T": "", "U": "", "V": "", "W": "", "X": "", "Y": "",
+                           "Z": ""}
+            self.alphabet_frame.destroy()
+            self.decode_frame.destroy()
+            self.buildCodeFrame()
+            self.text_decode_area.delete(1.0, "end")
+
+        def addLetter(self):
+            letter_window = tk.Toplevel(self)
+            letter_frame = tk.LabelFrame(letter_window, text="Add custom letter", relief="groove")
+            label_text = tk.StringVar()
+            label_text.set("Set custom letter")
+            tk.Label(letter_frame, textvariable=label_text, height=2).pack(side="left")
+            letter_var = tk.StringVar()
+            letter_var.trace("w", lambda name, index, mode, letter_var=letter_var: self.translateText(letter_var))
+            tk.Entry(letter_frame, textvariable=letter_var).pack(side="left")
+            letter_frame.pack(fill="both", expand=1, pady=5)
+
+            button_frame = tk.Frame(letter_window)
+            tk.Button(button_frame, text="Ok", command=lambda:
+                      self.setLetter(letter_var, letter_window)).pack(side="left", padx=30)
+            tk.Button(button_frame, text="Cancel", command=lambda:
+                      self.closeWindow(letter_window)).pack(side="left", padx=30)
+            button_frame.pack(fill="both", expand=1, pady=5)
+
+        def translateText(self, input):
+            if(len(input.get()) > 0):
+                input.set(input.get()[0])
+
             text = self.text_area.get(1.0, "end")
             self.text_decode_area.delete(1.0, "end")
             decoded_text = list()
@@ -106,39 +139,6 @@ if __name__ == "__main__":
 
             self.text_decode_area.insert("1.0", "".join(decoded_text))
 
-        def resetDecoding(self):
-            self.decode = {"A": "", "B": "", "C": "", "D": "", "E": "", "F": "", "G": "",
-                           "H": "", "I": "", "J": "", "K": "", "L": "", "M": "",
-                           "N": "", "O": "", "P": "", "Q": "", "R": "", "S": "",
-                           "T": "", "U": "", "V": "", "W": "", "X": "", "Y": "",
-                           "Z": ""}
-            self.alphabet_frame.destroy()
-            self.decode_frame.destroy()
-            self.buildCodeFrame()
-            self.text_decode_area.delete(1.0, "end")
-
-        def addLetter(self):
-            letter_window = tk.Toplevel(self)
-            letter_frame = tk.LabelFrame(letter_window, text="Add custom letter", relief="groove")
-            label_text = tk.StringVar()
-            label_text.set("Set custom letter")
-            tk.Label(letter_frame, textvariable=label_text, height=2).pack(side="left")
-            letter_var = tk.StringVar()
-            letter_var.trace("w", lambda name, index, mode, letter_var=letter_var: self.limitCharacter(letter_var))
-            tk.Entry(letter_frame, textvariable=letter_var).pack(side="left")
-            letter_frame.pack(fill="both", expand=1, pady=5)
-
-            button_frame = tk.Frame(letter_window)
-            tk.Button(button_frame, text="Ok", command=lambda:
-                      self.setLetter(letter_var, letter_window)).pack(side="left", padx=30)
-            tk.Button(button_frame, text="Cancel", command=lambda:
-                      self.closeWindow(letter_window)).pack(side="left", padx=30)
-            button_frame.pack(fill="both", expand=1, pady=5)
-
-        def limitCharacter(self, input):
-            if(len(input.get()) > 0):
-                input.set(input.get()[0])
-
         def configureScrollbar(self, event):
             self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
@@ -152,13 +152,12 @@ if __name__ == "__main__":
                 letter_entry.configure(disabledforeground="black")
 
                 letter_decode = tk.StringVar()
-                letter_decode.trace("w", lambda name, index, mode, letter_decode=letter_decode: self.limitCharacter(letter_decode))
+                letter_decode.trace("w", lambda name, index, mode, letter_decode=letter_decode: self.translateText(letter_decode))
                 self.decode[letter.get().upper()] = letter_decode
                 tk.Entry(self.decode_frame, textvariable=letter_decode, width=2).pack(side="left")
                 self.closeWindow(window)
             else:
                 messagebox.showwarning("Warning", "The character '" + letter.get().upper() + "' already exists")
-                #self.addLetter()
 
         def closeWindow(self, window):
             window.destroy()
